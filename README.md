@@ -30,8 +30,8 @@ To do this first generate a new key:
 
 ```
 MYNAME=<your name>
-gaiacli keys new $MYNAME
-gaiacli keys list
+gaia client keys new $MYNAME
+gaia client keys list
 MYADDR=<your newly generated address>
 ```
 
@@ -52,7 +52,7 @@ Now we can start a new node in the background - but note that it may take a dece
 chunk of time to sync with the existing testnet... go brew a pot of coffee! 
 
 ```
-gaia start --home=$GAIANET  &> gaia.log &
+gaia node start --home=$GAIANET  &> gaia.log &
 ```
 
 Of course, you can follow the logs to see progress with `tail -f gaia.log`.
@@ -76,19 +76,19 @@ PUBKEY=$(cat $GAIANET/priv_validator.json | jq -r .pub_key.data)
 Next let's initialize the gaia client to start interacting with the testnet:
 
 ```
-gaiacli init --chain-id=gaia --node=tcp://localhost:46657
+gaia client init --chain-id=gaia --node=tcp://localhost:46657
 ```
 
 And check our balance:
 
 ```
-gaiacli query account $MYADDR
+gaia client query account $MYADDR
 ```
 
 We are now ready to bond some tokens:
 
 ```
-gaiacli tx bond --amount=5fermion --name=$MYNAME --pubkey=$PUBKEY
+gaia client tx bond --amount=5fermion --name=$MYNAME --pubkey=$PUBKEY
 ```
 
 Bonding tokens means that your balance is tied up as _stake_. Don't worry,
@@ -98,13 +98,13 @@ begin to participate in consensus!
 
 We can now check the validator set and see that we are a part of the club!
 ```
-gaiacli query validators
+gaia client query validators
 ```
 
 Finally lets unbond to get back our tokens
 
 ```
-gaiacli tx unbond --amount=5fermion --name=$MYNAME
+gaia client tx unbond --amount=5fermion --name=$MYNAME
 ```
 
 Remember to unbond before stopping your node!
@@ -117,8 +117,8 @@ First, generate a new key with a name, and save the address:
 
 ```
 MYNAME=<your name>
-gaiacli keys new $MYNAME
-gaiacli keys list
+gaia client keys new $MYNAME
+gaia client keys list
 MYADDR=<your newly generated address>
 ```
 Now initialize a gaia chain:
@@ -137,7 +137,7 @@ and copying in the genesis:
 
 
 ```
-gaia init $MYADDR --home=$HOME/.gaia2 --chain-id=test
+gaia node init $MYADDR --home=$HOME/.gaia2 --chain-id=test
 cp $HOME/.gaia1/genesis.json $HOME/.gaia2/genesis.json
 ```
 
@@ -161,9 +161,9 @@ seeds = "0.0.0.0:46656"
 Great, now that we've initialized the chains, we can start both nodes in the background:
 
 ```
-gaia start --home=$HOME/.gaia1  &> gaia1.log &
+gaia node start --home=$HOME/.gaia1  &> gaia1.log &
 NODE1_PID=$!
-gaia start --home=$HOME/.gaia2  &> gaia2.log &
+gaia node start --home=$HOME/.gaia2  &> gaia2.log &
 NODE2_PID=$!
 ```
 
@@ -208,14 +208,14 @@ cat $HOME/.gaia2/priv_validator.json | jq .pub_key.data
 Now we can bond some coins to that pubkey:
 
 ```
-gaiacli tx bond --amount=10fermion --name=$MYNAME --pubkey=<validator pubkey>
+gaia client tx bond --amount=10fermion --name=$MYNAME --pubkey=<validator pubkey>
 ```
 
 We should see our account balance decrement, and the pubkey get added to the app's list of bonds:
 
 ```
-gaiacli query account $MYADDR
-gaiacli query validators
+gaia client query account $MYADDR
+gaia client query validators
 ``` 
 
 To confirm for certain the new validator is active, check tendermint:
@@ -231,9 +231,9 @@ Finally, to relinquish all your power, unbond some coins. You should see your
 VotingPower reduce and your account balance increase.
 
 ```
-gaiacli tx unbond --amount=10fermion --name=$MYNAME
-gaiacli query validators
-gaiacli query account $MYADDR
+gaia client tx unbond --amount=10fermion --name=$MYNAME
+gaia client query validators
+gaia client query account $MYADDR
 ``` 
 
 Once you unbond enough, you will no longer be needed to make new blocks.
